@@ -4,27 +4,23 @@
 {% block container %}
   <main class="container mt-3">
     <section>
-      <h1 class="h1 text-center mx-auto mt-4 pt-5" style="font-size: 70px;"><strong>Бэкенд</strong></h1>
+      <h1 class="h1 text-center mx-auto mt-4 pt-5" style="font-size: 70px;"><strong>Вакансии</strong></h1>
       <p class="text-center pt-1">{{vacancies|length}} вакансий</p>
       <div class="row mt-5">
-        <div class="col-12 col-lg-8 offset-lg-2 m-auto">
-        {% for job in vacancies %}
-          <div class="card mb-4">
-            <div class="card-body px-4">
-              <div class="row">
-                <div class="col-12 col-md-8 col-lg-9">
-                  <h2 class="h2 pb-2">{{job.title}}</h2>
-                  <p class="mb-2">{{job.specialty.title}}</p>
-                  <p>От {{job.salary_min}} до {{job.salary_max}}</p>
-                  <p class="text-muted pt-1">{{job.published_at}}</p>
-                </div>
-                <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
-                  <a href="#"><img src="https://place-hold.it/130x80" width="130" height="80" alt=""></a>
-                </div>
+       <div class="col-12 col-lg-8 offset-lg-2 m-auto">
+          {% for vac in vacancies %}
+          <a class="text-body" href="{% url 'vacancy' vac.id %}"><div class="card mb-3">
+            <div class="card-body mx-4">
+              <div class="col">
+                  <h2 class="h2 pb-2">{{vac.title}}</h2>
+                  <img  src={{vac.company.logo.url}} width="180" height="80">
+                  <p class="mb-2">{{vac.skills|truncatewords:30}}</p>
+                  <p>От {{vac.salary_min}} до {{vac.salary_max}} руб.</p>
+                  <p class="text-muted pt-1">{{vac.published_at}}</p>
               </div>
             </div>
-          </div>
-        {% endfor %}
+          </div></a>
+          {% endfor %}
         </div>
       </div>
     </section>

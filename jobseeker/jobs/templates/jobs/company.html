@@ -1,26 +1,39 @@
 {% extends "base.html" %}
 {% load static %}
- {% block title %} <title>Компания | Джуманджи</title> {% endblock %}
+ {% block title %} <title>Компания | Jobseeker</title> {% endblock %}
   
 {% block container %}
   <main class="container mt-3">
     <div class="navbar mt-5">
-      <p><a href="#">Назад</a></p>
+      <button class="mb-2 btn btn-dark text-light"><a href="{% url 'main' %}">Назад</a></button>
     </div>
     <section>
       <div class="text-center">
-        <img src={{company.logo}} width="130" height="80" alt="">
+        <img src={{company.logo.url}} width="350" height="180" alt="">
       </div>
-      <h1 class="h1 text-center mx-auto mt-0 pt-1" style="font-size: 70px;"><strong>{{company.name}}</strong></h1>
-      <p class="text-center pt-1">Компания, {{company.Vacancies.all|length}} вакансий</p>
+
+      <p class="text-center pt-1">Компания, {{company.vacancies.all|length}} вакансий</p>
+
+      <button class="mb-2 btn btn-dark" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Company Info
+      </button>
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          <p><b>Город:</b> {{company.location}}</p>
+          <p><b>Количество сотрудников:</b> {{company.employee_count}}</p>
+          <b>О компании:</b>
+          <p>{{company.description}}</p>
+        </div>
+      </div>
+
       <div class="row mt-5">
         <div class="col-12 col-lg-8 offset-lg-2 m-auto">
-         {% for job in company.Vacancies.all%}
+         {% for job in company.vacancies.all%}
           <div class="card mb-4">
             <div class="card-body px-4">
               <div class="row">
                 <div class="col-12 col-md-8 col-lg-9">
-                  <h2 class="h2 pb-2"><a href="/jobs/{{job.id}}">{{job.title}}</a></h2>
+                  <h2 class="h2 pb-2"><a class="text-body" href="/jobs/{{job.id}}">{{job.title}}</a></h2>
                   <p class="mb-2">{{job.specialty.title}}</p>
                   <p>От {{job.salary_min}} до {{job.salary_max}}</p>
                   <p class="text-muted pt-1">{{job.published_at}}</p>

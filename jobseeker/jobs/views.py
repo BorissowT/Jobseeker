@@ -23,14 +23,15 @@ class VacanciesView(View):
             return redirect('/')
 
 
-class JobsView(View):
+class VacancyView(View):
     def get(self, request, id):
-        return render(request, "jobs/jobs.html", context={"job": Vacancy.objects.filter(id=id).first()})
+        return render(request, "jobs/vacancy.html", context={"vacancy": Vacancy.objects.filter(id=id).first()})
 
 
 class CategoryView(View):
     def get(self, request, category):
-        return render(request, "jobs/category.html")
+        print(Speciality.objects.filter(code=category).first().title)
+        return render(request, "jobs/category.html", context={"category": Speciality.objects.filter(code=category).first()})
 
 
 class SendView(View):
@@ -40,7 +41,7 @@ class SendView(View):
 
 class CompaniesView(View):
     def get(self, request):
-        return render(request, "jobs/companies.html")
+        return render(request, "jobs/companies.html", context={"companies": Company.objects.all()})
 
 
 class CompanyView(View):
@@ -80,8 +81,31 @@ class MySignupView(CreateView):
 
 class ResumeView(View):
     def get(self, request):
-        return render(request, "jobs/resume-create.html", context={})
+        if request.user.is_authenticated:
+            return render(request, "jobs/resume-create.html", context={})
+        else:
+            return redirect('/')
+
 
 class ResumeCreateView(View):
     def get(self, request):
-        return render(request, "jobs/resume-edit.html", context={})
+        if request.user.is_authenticated:
+            return render(request, "jobs/resume-edit.html", context={})
+        else:
+            return redirect('/')
+
+
+class MyCompanyView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return render(request, "jobs/company-create.html", context={"company": Company.objects.filter(user=request.user).first()})
+        else:
+            return redirect('/')
+
+
+class MyCompanyEditView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return render(request, "jobs/company-edit.html", context={})
+        else:
+            return redirect('/')

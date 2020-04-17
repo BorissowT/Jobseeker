@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Создать карточку компании | Jobseeker</title>{% endblock %}
+{% block container %}
+
+  <main class="container mt-3 pb-5">
+
+    {% if not user.company %}
+     <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
+      <div class="card-body px-3 pb-4">
+        <h1 class="h4 pt-2">Моя компания</h1>
+        <p class="mt-2">Пока мы думаем, что вы – частное лицо. Хотите создать карточку компании, разместить информаию и вакансии?</p>
+        <a href="#" class="btn btn-info mb-2">Создать карточку компании</a>
+      </div>
+      {% else %}
+       <section class="col-12 col-lg-8 offset-lg-2 mt-5 card">
+      <div class="card mb-3">
+            <div class="card-body mx-4">
+              <div class="col">
+                <div class="row">
+                  <h2 class="col-9 h2 pb-2">{{company.name}}</h2>
+                  <img class="col-3" src={{user.company.logo.url}} width="180" height="80">
+                </div>
+                <p>Город: {{company.location}}</p>
+                <p>Вакансий: {{company.vacancies.all|length}}</p>
+                <div class="row">
+                  <p class="col-9">Сотрудников: {{company.employee_count}}</p>
+                  <button class="col-3 mb-2 btn btn-info text-light"><a href="{% url 'mycompany/edit' %}">Редактировать</a></button>
+                </div>
+              </div>
+            </div>
+          </div>
+    {% endif %}
+    </section>
+  </main>
+
+{% endblock %}

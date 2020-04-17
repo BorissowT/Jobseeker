@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Category</title>
-</head>
-<body>
-"Здесь будет категория"
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Вакансии | Jobseeker</title>{% endblock %}
+{% block container %}
+  <main class="container mt-3">
+    <section>
+      <h1 class="h1 text-center mx-auto mt-4 pt-5" style="font-size: 70px;"><strong>{{category.title}}</strong></h1>
+      <p class="text-center pt-1">{{category.vacancies.all|length}} вакансий</p>
+      <div class="row mt-5">
+        <div class="col-12 col-lg-8 offset-lg-2 m-auto">
+          {% for vac in category.vacancies.all %}
+          <a class="text-body" href="{% url 'vacancy' vac.id %}"><div class="card mb-3">
+            <div class="card-body mx-4">
+              <div class="col">
+                  <h2 class="h2 pb-2">{{vac.title}}</h2>
+                  <img  src={{vac.company.logo.url}} width="180" height="80">
+                  <p class="mb-2">{{vac.skills|truncatewords:30}}</p>
+                  <p>От {{vac.salary_min}} до {{vac.salary_max}} руб.</p>
+                  <p class="text-muted pt-1">{{vac.published_at}}</p>
+              </div>
+            </div>
+          </div></a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </main>
+
+{% endblock %}

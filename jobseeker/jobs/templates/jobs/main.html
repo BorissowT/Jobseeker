@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}<title>Джуманджи</title>{% endblock %}
+{% block title %}<title>Jobseeker</title>{% endblock %}
 {% block container %}
   <main class="container mt-3">
     <section>
@@ -12,7 +12,7 @@
               <input class="form-control w-100" type="search" placeholder="Найти работу или стажировку" aria-label="Найти работу или стажировку">
             </div>
             <div class="form-group col-4 col-md-2 pl-0">
-              <button class="btn btn-primary w-100" type="submit">Найти</button>
+              <button class="btn btn-dark w-100" type="submit">Найти</button>
             </div>
           </form>
           <p>Например:
@@ -21,7 +21,7 @@
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">Django</a>
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">Парсинг</a>
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">ML</a>
-            <a href="#" class="text-primary border-bottom border-primary ml-4 text-decoration-none">Все теги</a>
+            <a href="#" class="text-dark border-bottom border-primary ml-4 text-decoration-none">Все теги</a>
           </p>
         </div>
       </div>
@@ -32,13 +32,13 @@
       <div class="row mb-0">
           {% for spec in specialities %}
         <div class="col-6 col-md-6 col-lg-3">
-          <div class="card pt-4 text-center mb-4">
-            <img class="mx-auto d-block" src={% static spec.picture %} width="80" height="80" alt="">
+          <a href="{% url 'category' spec.code %}"> <div class="card pt-4 text-center mb-4">
+            <img class="mx-auto d-block" src={{spec.picture.url}} width="80" height="80" alt="">
             <div class="card-body">
-              <p class="card-text mb-2">{{spec.title}}</p>
-              <p class="card-text"><a href="#">{{spec.Vacancies.all|length}}. вакансий</a></p>
+              <p class="text-body" class="card-text mb-2">{{spec.title}}</p>
+              <p class="card-text"><a class="text-body" href="{% url 'category' spec.code %}">{{spec.vacancies.all|length}}. вакансий</a></p>
             </div>
-          </div>
+          </div></a>
         </div>
           {% endfor %}
      </div>
@@ -49,9 +49,9 @@
           {% for company in companies %}
         <div class="col-6 col-md-6 col-lg-3">
           <div class="card pt-4 text-center mb-4">
-            <a href="#"><img class="mx-auto d-block" src={{company.logo}} width="150" height="80" alt=""></a>
+            <a href="{% url 'company' company.id %}"><img class="mx-auto d-block" src={{company.logo.url}} width="150" height="80" alt=""></a>
             <div class="card-body">
-              <p class="card-text"><a href="company/{{company.id}}">{{company.Vacancies.all|length}} вакансий</a></p>
+                <p class="text-body card-text"><a class="text-body" href="{% url 'company' company.id %}">{{company.vacancies.all|length}} вакансий</a></p>
             </div>
           </div>
         </div>

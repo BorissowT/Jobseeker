@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Companies</title>
-</head>
-<body>
-"Здесь будут компании"
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Компании | Jobseeker</title>{% endblock %}
+{% block container %}
+  <main class="container mt-3">
+    <section>
+      <h1 class="h1 text-center mx-auto mt-4 pt-5" style="font-size: 70px;"><strong>Компании</strong></h1>
+      <p class="text-center pt-1">{{companies|length}} компаний</p>
+      <div class="row mt-5">
+        <div class="col-12 col-lg-8 offset-lg-2 m-auto">
+          {% for company in companies %}
+          <a class="text-body" href="{% url 'company' company.id %}"><div class="card mb-3">
+            <div class="card-body mx-4">
+              <div class="col">
+                <div class="row">
+                  <h2 class="col-9 h2 pb-2">{{company.name}}</h2>
+                  <img class="col-3" src={{company.logo.url}} width="180" height="80">
+                  </div>
+                  <p class="mb-2">{{company.description|truncatewords:30}}</p>
+                  <p>Сотрудников: {{company.employee_count}}</p>
+              </div>
+            </div>
+          </div></a>
+          {% endfor %}
+
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

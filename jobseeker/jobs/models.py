@@ -6,17 +6,23 @@ class Company(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
-    logo = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR')
     description = models.TextField()
     employee_count = models.IntegerField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company')
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.id)
 
 
 class Speciality(models.Model):
     id = models.IntegerField(primary_key=True)
     code = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
-    picture = models.CharField(max_length=100)
+    picture = models.ImageField(upload_to='MEDIA_SPECIALITY_IMAGE_DIR')
+
+    def __str__(self):
+        return "{} ({})".format(self.code, self.id)
 
 
 class Vacancy(models.Model):
@@ -28,6 +34,9 @@ class Vacancy(models.Model):
     salary_min = models.IntegerField()
     salary_max = models.IntegerField()
     published_at = models.DateField()
+
+    def __str__(self):
+        return "{} ({})".format(self.title, self.id)
 
 
 class Resume(models.Model):
