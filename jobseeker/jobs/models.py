@@ -33,10 +33,11 @@ class Vacancy(models.Model):
     skills = models.TextField()
     salary_min = models.IntegerField()
     salary_max = models.IntegerField()
+    description = models.TextField()
     published_at = models.DateField()
 
     def __str__(self):
-        return "{} ({})".format(self.title, self.id)
+        return "{} ({})".format(self.title, self.company.name)
 
 
 class Resume(models.Model):
@@ -53,6 +54,7 @@ class Resume(models.Model):
 
 class Application(models.Model):
     id = models.IntegerField(primary_key=True)
+    written_username = models.CharField(max_length=50)
     written_phone = models.CharField(max_length=50)
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='applications')

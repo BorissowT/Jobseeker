@@ -40,22 +40,21 @@
         <ul class="navbar-nav col-2 justify-content-end">
           <li class="nav-item active">
              <div class="btn-group">
-              <button type="button" class="btn dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{user.username}}
-              </button>
-              <div class="dropdown-menu dropdown-menu-right mt-3">
                 {% if user.is_authenticated %}
+                 <button type="button" class="btn dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{user.username}}
+                 </button>
+                 <div class="dropdown-menu dropdown-menu-right mt-3">
                 <a href="{% url 'myresume' %}" class="dropdown-item py-2">Резюме</a>
                 <a href="/mycompany" class="dropdown-item py-2">Компания</a>
                  {% if user.is_superuser %}
                  <a href="/admin" class="dropdown-item py-2">Войти в админку</a>
                  {% endif %}
                 <a href="/logout" class="dropdown-item py-2">Выйти</a>
-              </div>
+                </div>
                {% else %}
-              <a href="/login" >Вход</a>
+              <a class="text-body mt-2" href="{% url 'login' %}" ><strong>Вход</strong></a>
                {% endif %}
-
           </li>
         </ul>
       </div>

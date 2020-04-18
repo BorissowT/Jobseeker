@@ -11,15 +11,17 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
-              <p class="alert alert-info" role="alert">
-                Информация о компании обновлена
-              </p>
+
               <form action="/echo">
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyName">Название компании</label>
-                      <input class="form-control" type="text" value="Staffing Smarter" id="companyName">
+                      {% if user.company %}
+                      <input class="form-control" type="text" value="{{user.company.name}}" id="companyName">
+                      {% else %}
+                      <input class="form-control" type="text" value="" id="companyName">
+                      {% endif%}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
@@ -27,7 +29,11 @@
                       <label class="mb-2 text-dark" for="companyLogo">Логотип</label>
                       <div class="row align-items-center">
                         <div class="col-6">
+                          {% if user.company %}
+                          <img src="{{user.company.logo.url}}" alt="" style="max-width: 120px;height: auto;">
+                          {% else %}
                           <img src="https://place-hold.it/120x40" alt="" style="max-width: 120px;height: auto;">
+                          {% endif%}
                         </div>
                         <div class="col-6" style="position: relative;">
                           <div class="input-group-prepend" style="position: absolute; top: 0;right: 15px;">
@@ -45,19 +51,31 @@
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyTeam">Количество человек в компании</label>
-                      <input class="form-control" type="text" value="10-15" id="companyTeam">
+                      {% if user.company %}
+                      <input class="form-control" type="text" value="{{user.company.employee_count}}" id="companyTeam">
+                      {% else %}
+                      <input class="form-control" type="text" value="" id="companyTeam">
+                      {% endif%}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyLocation">География</label>
-                      <input class="form-control" type="text" value="Рязань" id="companyLocation">
+                      {% if user.company %}
+                      <input class="form-control" type="text" value="{{user.company.location}}" id="companyLocation">
+                      {% else %}
+                      <input class="form-control" type="text" value="" id="companyLocation">
+                      {% endif%}
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
                   <label class="mb-2 text-dark" for="companyInfo">Информация о&nbsp;компании</label>
-                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;">Для тех, кто желает работать в&nbsp;комфортном офисе,&nbsp;&mdash; у&nbsp;нас их&nbsp;целых три. Исторически так сложилось, что руководство и&nbsp;менеджерский состав располагается в&nbsp;Москве (обусловлено близостью заказчиков), центр разработки&nbsp;&mdash; в&nbsp;Ульяновске, в&nbsp;т.&nbsp;ч. школа молодых разработчиков и&nbsp;QA-центр&nbsp;&mdash; в&nbsp;Казани.</textarea>
+                  {% if user.company %}
+                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;"> {{user.company.description}}</textarea>
+                  {% else %}
+                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;"></textarea>
+                  {% endif%}
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-info" value="Сохранить">

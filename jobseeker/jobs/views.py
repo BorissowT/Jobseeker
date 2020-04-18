@@ -5,8 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
 
-from .models import Company, Speciality, Vacancy
-
+from .models import Company, Speciality, Vacancy, Resume
 
 
 class MainView(View):
@@ -17,15 +16,28 @@ class MainView(View):
 
 class VacanciesView(View):
     def get(self, request):
-        if request.user.is_authenticated:
             return render(request, "jobs/vacancies.html", context={"vacancies": Vacancy.objects.all()})
-        else:
-            return redirect('/')
+
 
 
 class VacancyView(View):
     def get(self, request, id):
         return render(request, "jobs/vacancy.html", context={"vacancy": Vacancy.objects.filter(id=id).first()})
+
+
+class VacancyEditView(View):
+    def get(self, request, id):
+        if request.user.is_authenticated:
+            try:
+                company = request.user.company
+                if Vacancy.objects.filter(company=company, id=id).first():
+                    return render(request, "jobs/vacancy-edit.html", context={"vacancy": Vacancy.objects.filter(company=company, id=id).first()})
+                else:
+                    return redirect('/')
+            except:
+                return redirect('/')
+        else:
+            return redirect('/')
 
 
 class CategoryView(View):
@@ -81,8 +93,10 @@ class MySignupView(CreateView):
 
 class ResumeView(View):
     def get(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and Resume.objects.filter(user=request.user).first()==None:
             return render(request, "jobs/resume-create.html", context={})
+        elif request.user.is_authenticated and Resume.objects.filter(user=request.user).first():
+            return redirect('/myresume/edit')
         else:
             return redirect('/')
 
@@ -90,7 +104,8 @@ class ResumeView(View):
 class ResumeCreateView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return render(request, "jobs/resume-edit.html", context={})
+            resume = Resume.objects.filter(user=request.user).first()
+            return render(request, "jobs/resume-edit.html", context={"resume": resume})
         else:
             return redirect('/')
 
