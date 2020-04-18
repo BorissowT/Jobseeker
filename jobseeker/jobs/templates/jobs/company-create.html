@@ -3,7 +3,6 @@
 {% block title %}<title>Создать карточку компании | Jobseeker</title>{% endblock %}
 {% block container %}
 
-  <main class="container mt-3 pb-5">
     {% if not user.company %}
      <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
       <div class="card-body px-3 pb-4">
@@ -21,10 +20,13 @@
                   <img class="col-3" src={{user.company.logo.url}} width="180" height="80">
                 </div>
                 <p>Город: {{company.location}}</p>
-                <p>Вакансий: {{company.vacancies.all|length}}</p>
+                <div class="row">
+                  <p class="col-7">Вакансий: {{company.vacancies.all|length}}</p>
+                  <a class="col-5 pl-4" href="{% url 'vacancy/create' %}"><button class=" mb-2 btn btn-info text-light">Новая вакансия</button></a>
+                </div>
                 <div class="row">
                   <p class="col-7">Сотрудников: {{company.employee_count}}</p>
-                  <button class="col-5 mb-2 btn btn-info text-light"><a href="{% url 'mycompany/edit' %}">Редактировать компанию</a></button>
+                  <a class="col-5" href="{% url 'mycompany/edit' %}"><button class=" mb-2 btn btn-info text-light">Редактировать компанию</button></a>
                 </div>
               </div>
             </div>

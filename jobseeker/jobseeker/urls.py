@@ -6,13 +6,12 @@ from django.conf.urls.static import static
 from django.views.static import serve
 from django.urls import re_path
 
-from jobs.views import MainView, VacanciesView, CategoryView, CompanyView, MyLoginView, MySignupView, ResumeView, ResumeCreateView, MyCompanyView, MyCompanyEditView, VacancyView, CompaniesView, VacancyEditView
+from jobs.views import MainView, VacanciesView, CategoryView, CompanyView, MyLoginView, MySignupView, ResumeView, ResumeCreateView, MyCompanyView, MyCompanyEditView, VacancyView, CompaniesView, VacancyEditView, VacancyCreateView
 
 
 urlpatterns = [
     path('', MainView.as_view(), name="main"),
 
-    # path('jobs/<int:id>/send/', SendView.as_view()),
     path('category/<str:category>/', CategoryView.as_view(), name="category"),
 
     path('admin/', admin.site.urls, name="admin")
@@ -22,6 +21,7 @@ urlpatterns += [
     path('vacancies/', VacanciesView.as_view(), name="vacancies"),
     path('vacancy/<int:id>', VacancyView.as_view(), name="vacancy"),
     path('vacancy/edit/<int:id>', VacancyEditView.as_view(), name="vacancy/edit"),
+    path('vacancy/create', VacancyCreateView.as_view(), name="vacancy/create")
 ]
 
 urlpatterns += [

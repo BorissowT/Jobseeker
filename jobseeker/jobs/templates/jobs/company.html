@@ -1,19 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
- {% block title %} <title>Компания | Jobseeker</title> {% endblock %}
+{% block title %} <title>Компания | Jobseeker</title> {% endblock %}
   
 {% block container %}
-  <main class="container mt-3">
+
     <div class="navbar mt-5">
-      <button class="mb-2 btn btn-dark text-light"><a href="{% url 'main' %}">Назад</a></button>
     </div>
     <section>
       <div class="text-center">
         <img src={{company.logo.url}} width="350" height="180" alt="">
       </div>
-
       <p class="text-center pt-1">Компания, {{company.vacancies.all|length}} вакансий</p>
-
       <button class="mb-2 btn btn-dark" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
         Company Info
       </button>
@@ -25,15 +22,14 @@
           <p>{{company.description}}</p>
         </div>
       </div>
-
       <div class="row mt-5">
         <div class="col-12 col-lg-8 offset-lg-2 m-auto">
          {% for job in company.vacancies.all%}
           <div class="card mb-4">
-            <div class="card-body px-4">
+           <a class="text-body" href="{% url 'vacancy' job.id %}"> <div class="card-body px-4">
               <div class="row">
                 <div class="col-12 col-md-8 col-lg-9">
-                  <h2 class="h2 pb-2"><a class="text-body" href="/jobs/{{job.id}}">{{job.title}}</a></h2>
+                  <h2 class="h2 pb-2">{{job.title}}</h2>
                   <p class="mb-2">{{job.specialty.title}}</p>
                   <p>От {{job.salary_min}} до {{job.salary_max}}</p>
                   <p class="text-muted pt-1">{{job.published_at}}</p>

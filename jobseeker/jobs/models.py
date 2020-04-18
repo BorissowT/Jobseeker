@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import datetime
+
+from phone_field import PhoneField
+
 
 class Company(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -34,7 +38,7 @@ class Vacancy(models.Model):
     salary_min = models.IntegerField()
     salary_max = models.IntegerField()
     description = models.TextField()
-    published_at = models.DateField()
+    published_at = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return "{} ({})".format(self.title, self.company.name)
@@ -55,7 +59,7 @@ class Resume(models.Model):
 class Application(models.Model):
     id = models.IntegerField(primary_key=True)
     written_username = models.CharField(max_length=50)
-    written_phone = models.CharField(max_length=50)
+    written_phone = PhoneField(max_length=50)
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='applications')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')

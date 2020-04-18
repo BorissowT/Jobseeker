@@ -10,7 +10,7 @@
             <section>
               <h2 class="h4 pt-2 pb-3">{{vacancy.title}}</h2>
               {% if is_updated %}
-                <p class="alert alert-info" role="alert">Вакансия обновлена</p>
+                <p class="alert alert-info" role="alert">Вакансия сохранена!</p>
               {% endif %}
               <form action="" method="post">{% csrf_token %}
                 <div class="row">
@@ -59,21 +59,6 @@
                   <input type="submit" class="btn btn-info" value="Сохранить">
                 </div>
               </form>
-
-              <h2 class="h4 pt-2 pb-3">Отклики - {{vacancy.applications.all|length}}</h2>
-              <!-- Application 1 -->
-                {% for application in vacancy.applications.all %}
-              <div class="card mt-3">
-                <div class="card-body px-4">
-                  <div class="row">
-                    <p class="col-11 mb-1 font-weight-bold">Имя: {{ application.written_username}}</p>
-                      <button onclick="location.href= '{% url 'vacancy/edit' vacancy.id %}?name = delete'" value='{{application.id}}'  type="button" class="col-1 close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  </div>
-                  <p class="mb-2 text-dark">Телефон: {{application.written_phone}}</p>
-                  <p class="mb-1">Письмо: {{application.written_cover_letter}}</p>
-                </div>
-              </div>
-                {% endfor %}
             </section>
             <!-- END Tab -->
           </div>

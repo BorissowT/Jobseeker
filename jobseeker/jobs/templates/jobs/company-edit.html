@@ -3,25 +3,23 @@
 {% block title %}<title>Моя компания | Jobseeker</title>{% endblock %}
 {% block container %}
 
-  <main class="container mt-3 pb-5">
     <div class="row mt-5">
       <div class="col-12 col-lg-8 offset-lg-2">
         <div class="card">
           <div class="card-body px-4 pb-4">
             <!-- Tab -->
             <section class="tab-pane fade show active">
+              {% if is_updated %}
+                <p class="alert alert-info" role="alert">Вакансия обновлена</p>
+              {% endif %}
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
-
-              <form action="/echo">
+              <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyName">Название компании</label>
-                      {% if user.company %}
-                      <input class="form-control" type="text" value="{{user.company.name}}" id="companyName">
-                      {% else %}
-                      <input class="form-control" type="text" value="" id="companyName">
-                      {% endif%}
+                        {{form.name}}
+                        {{form.name.errors}}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
@@ -40,7 +38,7 @@
                             <span class="btn btn-info px-4">Загрузить</span>
                           </div>
                           <div class="custom-file" style="">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01">
+                            {{form.logo}}
                           </div>
                         </div>
                       </div>
@@ -51,31 +49,22 @@
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyTeam">Количество человек в компании</label>
-                      {% if user.company %}
-                      <input class="form-control" type="text" value="{{user.company.employee_count}}" id="companyTeam">
-                      {% else %}
-                      <input class="form-control" type="text" value="" id="companyTeam">
-                      {% endif%}
+                      {{form.employee_count}}
+                      {{form.employee_count.errors}}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="companyLocation">География</label>
-                      {% if user.company %}
-                      <input class="form-control" type="text" value="{{user.company.location}}" id="companyLocation">
-                      {% else %}
-                      <input class="form-control" type="text" value="" id="companyLocation">
-                      {% endif%}
+                      {{form.location}}
+                      {{form.location.errors}}
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
                   <label class="mb-2 text-dark" for="companyInfo">Информация о&nbsp;компании</label>
-                  {% if user.company %}
-                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;"> {{user.company.description}}</textarea>
-                  {% else %}
-                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;"></textarea>
-                  {% endif%}
+                 {{form.description}}
+                 {{form.description.errors}}
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-info" value="Сохранить">
