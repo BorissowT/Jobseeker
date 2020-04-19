@@ -6,11 +6,12 @@ from django.conf.urls.static import static
 from django.views.static import serve
 from django.urls import re_path
 
-from jobs.views import MainView, VacanciesView, CategoryView, CompanyView, MyLoginView, MySignupView, ResumeView, ResumeCreateView, MyCompanyView, MyCompanyEditView, VacancyView, CompaniesView, VacancyEditView, VacancyCreateView
+from jobs.views import MainView, VacanciesView, CategoryView, CompanyView, MyLoginView, MySignupView, ResumeView, ResumeCreateView, MyCompanyView, MyCompanyEditView, VacancyView, CompaniesView, VacancyEditView, VacancyCreateView, SearchView
 
 
 urlpatterns = [
     path('', MainView.as_view(), name="main"),
+    path('search/', SearchView.as_view(), name='search'),
 
     path('category/<str:category>/', CategoryView.as_view(), name="category"),
 

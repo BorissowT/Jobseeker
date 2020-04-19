@@ -6,14 +6,16 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 
 from .models import Company, Speciality, Vacancy, Resume, Application
-from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm
+from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm
 
 
 class MainView(View):
     def get(self, request):
+        form = SearchForm()
         return render(request, "jobs/main.html", context={"specialities": Speciality.objects.all(),
                                                           "companies": Company.objects.all(),
-                                                          "main": True,})
+                                                          "main": True,
+                                                          "form": form})
 
 
 class VacanciesView(View):
@@ -34,9 +36,10 @@ class VacancyView(View):
     def post(self, request, id):
         form = ApplicationForm(request.POST)
         if form.is_valid():
+            date = form.cleaned_data
             phone = form.clean_phone()
-            name = form.clean_name()
-            message = form.cleaned_message()
+            name = date['name']
+            message = date['message']
             Application.objects.create(written_username=name, written_phone=phone, written_cover_letter=message, vacancy=Vacancy.objects.filter(id=id).first(), user=request.user)
             if not form.errors:
                 return render(request, "jobs/send.html")
@@ -74,15 +77,16 @@ class VacancyEditView(View):
             form = VacancyForm(request.POST)
             vacancy = Vacancy.objects.filter(company=company_us, id=id).first()
             if form.is_valid():
-                title = form.clean_title()
-                speciality = form.clean_speciality()
-                skills = form.clean_skills()
+                data = form.cleaned_data
+                title = data['title']
+                speciality = data['speciality']
+                skills = data['skills']
                 salary_min = form.clean_salary_min()
                 salary_max = form.clean_salary_max()
-                description = form.clean_description()
+                description = data['description']
 
                 vacancy.title = title
-                vacancy.speciality = Speciality.objects.filter(code=speciality).first()
+                vacancy.specialty = Speciality.objects.filter(code=speciality).first()
                 vacancy.skills = skills
                 vacancy.salary_min = salary_min
                 vacancy.salary_max = salary_max
@@ -300,5 +304,20 @@ class ResumeCreateView(View):
                     return render(request, "jobs/resume-edit.html", context={'form': form, 'is_updated': is_updated})
             else:
                 return render(request, "jobs/resume-edit.html", context={'form': form})
+        else:
+            return redirect('/')
+
+
+class SearchView(View):
+    def post(self, request):
+        form = SearchForm(request.POST or None)
+        if form.is_valid():
+            search = form.cleaned_data.get('search')
+            vacancies = Vacancy.objects.all()
+            search_list = []
+            for i in range(len(vacancies)):
+                if search in vacancies[i].title:
+                    search_list.append(vacancies[i])
+            return render(request, "jobs/search.html", context={'vacancies': search_list})
         else:
             return redirect('/')

@@ -2,7 +2,7 @@ from django import forms
 
 
 class ApplicationForm(forms.Form):
-    name = forms.CharField(label='Name and Surname', widget=forms.TextInput(attrs={'class': 'form-control',
+    name = forms.CharField(min_length=3, max_length=50, label='Name and Surname', widget=forms.TextInput(attrs={'class': 'form-control',
                                                                                    'id': 'userName',
                                                                                    'placeholder': 'Name',
                                                                                    'required': True}))
@@ -10,7 +10,7 @@ class ApplicationForm(forms.Form):
                                                                                 'required': True,
                                                                                 'placeholder': 'Phone',
                                                                                 'id': 'userPhone'}))
-    message = forms.CharField(label='message', widget=forms.Textarea(attrs={'class': 'form-control',
+    message = forms.CharField(min_length=3, max_length=550, label='message', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                'required': True,
                                                                                'id': 'userMsg',
                                                                                'rows':"8"}))
@@ -22,21 +22,9 @@ class ApplicationForm(forms.Form):
             raise forms.ValidationError('You have to set "+" first')
         return number
 
-    def clean_name(self):
-        name = self.cleaned_data.get("name")
-        if len(name) < 2:
-            raise forms.ValidationError('name','Please, type your name and surname')
-        return name
-
-    def cleaned_message(self):
-        message = self.cleaned_data.get("message")
-        if len(message) < 10:
-            return self.add_error('message','Please, type your message to the employer')
-        return message
-
 
 class VacancyForm(forms.Form):
-     title = forms.CharField(max_length=64, label='Title', widget=forms.TextInput(attrs={'class': 'form-control',
+     title = forms.CharField(min_length=3, max_length=50, label='Title', widget=forms.TextInput(attrs={'class': 'form-control',
                                                                                    'id': 'vacancyTitle',
                                                                                    'placeholder': 'Title',
                                                                                    'required': True}))
@@ -60,38 +48,16 @@ class VacancyForm(forms.Form):
                                                                    'id': 'vacancySalaryMax',
                                                                    'placeholder': 'Maximal salary',
                                                                    'required': True}))
-     description = forms.CharField(label='description', widget=forms.Textarea(attrs={'class': 'form-control',
+     description = forms.CharField(min_length=10, max_length=550, label='description', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                'required': True,
                                                                                'id': 'userMsg',
                                                                                 'placeholder': 'Description',
                                                                                'rows':"8"}))
-     skills = forms.CharField(label='skills', widget=forms.Textarea(attrs={'class': 'form-control',
+     skills = forms.CharField(min_length=3, max_length=550, label='skills', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                  'required': True,
                                                                                 'placeholder': 'Skils',
                                                                                  'id': 'vacancySkills',
                                                                                  'rows': "3"}))
-
-     def clean_title(self):
-         title = self.cleaned_data.get("title")
-         if len(title) < 2:
-            raise forms.ValidationError('This field is required')
-         return title
-
-     def clean_speciality(self):
-        specialisation = self.cleaned_data.get("speciality")
-        return specialisation
-
-     def clean_description(self):
-        description = self.cleaned_data.get("description")
-        if len(description) < 10:
-            raise forms.ValidationError('This field is required')
-        return description
-
-     def clean_skills(self):
-        skills = self.cleaned_data.get("skills")
-        if len(skills) < 10:
-            raise forms.ValidationError('This field is required')
-        return skills
 
      def clean_salary_min(self):
         salary_min = self.cleaned_data.get("salary_min")
@@ -180,3 +146,13 @@ class ResumeForm(forms.Form):
                                                          'id': 'Surname',
                                                          'placeholder': 'Surname',
                                                          'required': True}))
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(min_length=3, max_length=50, label='Search',
+                                widget=forms.TextInput(attrs={'class': 'form-control',
+                                                              'placeholder': 'Search for the vacancies',
+                                                              'required': True,
+                                                              'class': 'form-control w-100',
+                                                              'type':'search',
+                                                              'aria-label': 'Search for the vacancies'}))
