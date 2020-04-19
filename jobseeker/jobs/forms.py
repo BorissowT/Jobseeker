@@ -24,11 +24,11 @@ class ApplicationForm(forms.Form):
 
 
 class VacancyForm(forms.Form):
-     title = forms.CharField(min_length=3, max_length=50, label='Title', widget=forms.TextInput(attrs={'class': 'form-control',
+    title = forms.CharField(min_length=3, max_length=50, label='Title', widget=forms.TextInput(attrs={'class': 'form-control',
                                                                                    'id': 'vacancyTitle',
                                                                                    'placeholder': 'Title',
                                                                                    'required': True}))
-     speciality = forms.ChoiceField(widget=forms.Select(attrs={'class': 'custom-select mr-sm-2',
+    speciality = forms.ChoiceField(widget=forms.Select(attrs={'class': 'custom-select mr-sm-2',
                                                          'id': 'userSpecialization',
                                                          'required': True}), choices=[('frontend', 'Фронтенд'),
                                                              ('backend', 'Бекенд'),
@@ -38,34 +38,34 @@ class VacancyForm(forms.Form):
                                                              ('management', 'Менеджмент'),
                                                              ('testing', 'Тестирование'),
                                                              ('design', 'Дизайн'),])
-     salary_min = forms.IntegerField(label='Min salary',
+    salary_min = forms.IntegerField(label='Min salary',
                              widget=forms.TextInput(attrs={'class': 'form-control',
                                                            'id': 'vacancySalaryMin',
                                                            'placeholder': 'Minimal Salary',
                                                            'required': True}))
-     salary_max = forms.IntegerField(label='Max salary',
+    salary_max = forms.IntegerField(label='Max salary',
                                      widget=forms.TextInput(attrs={'class': 'form-control',
                                                                    'id': 'vacancySalaryMax',
                                                                    'placeholder': 'Maximal salary',
                                                                    'required': True}))
-     description = forms.CharField(min_length=10, max_length=550, label='description', widget=forms.Textarea(attrs={'class': 'form-control',
+    description = forms.CharField(min_length=10, max_length=550, label='description', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                'required': True,
                                                                                'id': 'userMsg',
                                                                                 'placeholder': 'Description',
                                                                                'rows':"8"}))
-     skills = forms.CharField(min_length=3, max_length=550, label='skills', widget=forms.Textarea(attrs={'class': 'form-control',
+    skills = forms.CharField(min_length=3, max_length=550, label='skills', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                  'required': True,
                                                                                 'placeholder': 'Skils',
                                                                                  'id': 'vacancySkills',
                                                                                  'rows': "3"}))
 
-     def clean_salary_min(self):
+    def clean_salary_min(self):
         salary_min = self.cleaned_data.get("salary_min")
         if salary_min < 0:
             raise forms.ValidationError("Salary can't be less than 0")
         return salary_min
 
-     def clean_salary_max(self):
+    def clean_salary_max(self):
         salary_max = self.cleaned_data.get("salary_max")
         if salary_max < 0:
             raise forms.ValidationError("Salary can't be less than 0")
