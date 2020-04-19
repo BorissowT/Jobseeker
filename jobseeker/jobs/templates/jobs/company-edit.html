@@ -10,7 +10,10 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               {% if is_updated %}
-                <p class="alert alert-info" role="alert">Вакансия обновлена</p>
+                <p class="alert alert-info" role="alert">Информация о компании обновлена</p>
+              {% endif %}
+              {% if is_created %}
+                <p class="alert alert-info" role="alert">Компания создана</p>
               {% endif %}
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
               <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}

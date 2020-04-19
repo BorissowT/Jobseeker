@@ -1,12 +1,12 @@
 from django.shortcuts import redirect, render
 from django.views import View
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import User
 
 from .models import Company, Speciality, Vacancy, Resume, Application
-from .forms import ApplicationForm, VacancyForm, CompanyForm
+from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm
 
 
 class MainView(View):
@@ -185,7 +185,8 @@ class MyCompanyEditView(View):
                     Company.objects.create(name=data["name"], location=data['location'], logo=data['logo'],
                                            employee_count=data['employee_count'], description=data['description'],
                                            user=request.user)
-                    return render(request, "jobs/company-edit.html", context={"form": form})
+                    is_created = True
+                    return render(request, "jobs/company-edit.html", context={"form": form, 'is_created':is_created})
                 else:
                     if data['logo']!=None:
                         company.logo = data['logo']
@@ -244,9 +245,60 @@ class ResumeView(View):
 class ResumeCreateView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            resume = Resume.objects.filter(user=request.user).first()
-            return render(request, "jobs/resume-edit.html", context={"resume": resume})
+            try:
+                resume = request.user.resume
+            except:
+                resume = None
+            if resume != None:
+                initial_data = {"name": request.user.first_name, "surname": request.user.last_name,
+                                'status': resume.status, 'salary': resume.salary, 'speciality': resume.specialty,
+                                'grade': resume.grade, 'education': resume.education, 'experience': resume.experience,
+                                'portfolio': resume.portfolio}
+                form = ResumeForm(request.POST or None, initial=initial_data)
+                return render(request, "jobs/resume-edit.html", context={"resume": resume, 'form': form})
+            else:
+                initial_data = {"name": request.user.first_name, "surname": request.user.last_name}
+                form = ResumeForm(request.POST or None, initial=initial_data)
+                return render(request, "jobs/resume-edit.html", context={'form': form})
         else:
             return redirect('/')
 
+    def post(self, request):
+        try:
+            resume = request.user.resume
+        except:
+            resume = None
+        if request.user.is_authenticated:
+            form = ResumeForm(request.POST or None)
+            if form.is_valid():
+                data = form.cleaned_data
+                if resume == None:
+                    Resume.objects.create(status=data["status"], portfolio=data["portfolio"], specialty=data["speciality"],
+                                          grade=data["grade"], education=data["education"], salary=data["salary"],
+                                          experience=data["experience"], user=request.user)
+                    user = User.objects.filter(username=request.user.username).first()
+                    user.first_name = data["name"]
+                    user.last_name = data["surname"]
+                    user.save()
+                    is_created = True
+                    return render(request, "jobs/resume-edit.html", context={'form': form, 'is_created': is_created})
+                else:
+                    resume.status = data["status"]
+                    resume.portfolio = data["portfolio"]
+                    resume.specialty = data["speciality"]
+                    resume.grade = data["grade"]
+                    resume.education = data["education"]
+                    resume.salary = data["salary"]
+                    resume.experience = data["experience"]
+                    resume.save()
 
+                    user = User.objects.filter(username=request.user.username).first()
+                    user.first_name = data["name"]
+                    user.last_name = data["surname"]
+                    user.save()
+                    is_updated = True
+                    return render(request, "jobs/resume-edit.html", context={'form': form, 'is_updated': is_updated})
+            else:
+                return render(request, "jobs/resume-edit.html", context={'form': form})
+        else:
+            return redirect('/')
