@@ -321,3 +321,8 @@ class SearchView(View):
             return render(request, "jobs/search.html", context={'vacancies': search_list})
         else:
             return redirect('/')
+
+def view_404 (request, exception):
+    return render(
+        request, '404.html'
+    )
