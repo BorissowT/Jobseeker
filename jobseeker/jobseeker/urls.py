@@ -1,14 +1,11 @@
-from django.contrib import admin
-from django.urls import path
-from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.static import serve
+from django.contrib import admin
+from django.contrib.auth.views import LogoutView
+from django.urls import path
 from django.urls import re_path
-from django.conf.urls import handler404, handler500
-
-from jobs.views import MainView, VacanciesView, CategoryView, CompanyView, MyLoginView, MySignupView, ResumeView, ResumeCreateView, MyCompanyView, MyCompanyEditView, VacancyView, CompaniesView, VacancyEditView, VacancyCreateView, SearchView
-
+from django.views.static import serve
+from jobs.views import *
 
 urlpatterns = [
     path('', MainView.as_view(), name="main"),

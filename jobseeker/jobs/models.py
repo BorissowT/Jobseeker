@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import datetime
 
@@ -10,7 +11,7 @@ class Company(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
-    logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR', default='static/jobs/placeholder.png')
+    logo = models.ImageField(upload_to=settings.MEDIA_COMPANY_IMAGE_DIR, default='static/jobs/placeholder.png')
     description = models.TextField()
     employee_count = models.IntegerField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company')
@@ -23,7 +24,7 @@ class Speciality(models.Model):
     id = models.IntegerField(primary_key=True)
     code = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
-    picture = models.ImageField(upload_to='MEDIA_SPECIALITY_IMAGE_DIR')
+    picture = models.ImageField(upload_to=settings.MEDIA_SPECIALITY_IMAGE_DIR)
 
     def __str__(self):
         return "{} ({})".format(self.code, self.id)

@@ -1,12 +1,12 @@
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.views import View
-from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.models import User
 
-from .models import Company, Speciality, Vacancy, Resume, Application
 from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm
+from .models import Company, Speciality, Vacancy, Resume, Application
 
 
 class MainView(View):
