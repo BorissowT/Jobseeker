@@ -116,12 +116,13 @@ class VacancyCreateView(View):
         company = request.user.company
         if request.user.is_authenticated:
             if form.is_valid():
-                title = form.clean_title()
-                speciality = form.clean_speciality()
-                skills = form.clean_skills()
+                data = form.cleaned_data
+                title = data["title"]
+                speciality = data["speciality"]
+                skills = data["skills"]
                 salary_min = form.clean_salary_min()
                 salary_max = form.clean_salary_max()
-                description = form.clean_description()
+                description = data["description"]
                 speciality = Speciality.objects.filter(code=speciality).first()
                 Vacancy.objects.create(title=title, specialty=speciality,
                                        skills=skills, salary_min=salary_min, salary_max=salary_max,

@@ -81,7 +81,7 @@ class CompanyForm(forms.Form):
                                                                                         'id': 'companyLocation',
                                                                                         'placeholder': 'Company location',
                                                                                         'required': True}))
-    logo = forms.FileField(label='Download', required=False,widget=forms.FileInput(attrs={'class': 'custom-file-input'}))
+    logo = forms.FileField(label='Download', required=True, widget=forms.FileInput(attrs={'class': 'custom-file-input'}))
     employee_count = forms.IntegerField(label='Employee count',
                            widget=forms.TextInput(attrs={'class': 'form-control',
                                                          'id': 'companyTeam',

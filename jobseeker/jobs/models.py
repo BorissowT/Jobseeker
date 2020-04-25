@@ -10,7 +10,7 @@ class Company(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
-    logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR')
+    logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR', default='static/jobs/placeholder.png')
     description = models.TextField()
     employee_count = models.IntegerField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company')
