@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import CreateView
+from django.http import HttpResponse, HttpResponseNotFound
 
 from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm
 from .models import Company, Speciality, Vacancy, Resume, Application
@@ -25,23 +26,25 @@ class VacanciesView(View):
 
 class VacancyView(View):
     def get(self, request, id):
-        if request.user.is_authenticated:
-            initial_data = {'name': "{} {}".format(request.user.first_name, request.user.last_name)}
+        if Vacancy.objects.filter(id=id).first():
+            if request.user.is_authenticated:
+                initial_data = {'name': "{} {}".format(request.user.first_name, request.user.last_name)}
+            else:
+                initial_data = {'name': " "}
+            form = ApplicationForm(request.POST or None, initial=initial_data)
+            return render(request, "jobs/vacancy.html", context={"vacancy": Vacancy.objects.filter(id=id).first(),
+                                                                 'form': form})
         else:
-            initial_data = {'name': " "}
-        form = ApplicationForm(request.POST or None, initial=initial_data)
-        return render(request, "jobs/vacancy.html", context={"vacancy": Vacancy.objects.filter(id=id).first(),
-                                                             'form': form})
+            return HttpResponse(status=404)
 
     def post(self, request, id):
         form = ApplicationForm(request.POST)
         if form.is_valid():
             date = form.cleaned_data
-            phone = form.clean_phone()
-            name = date['name']
-
-            message = date['message']
-            Application.objects.create(written_username=name, written_phone=phone, written_cover_letter=message, vacancy=Vacancy.objects.filter(id=id).first(), user=request.user)
+            date.update({'vacancy': Vacancy.objects.filter(id=id).first()})
+            date.update({'user': request.user})
+            print(date)
+            Application.objects.create(**date)
             return render(request, "jobs/send.html")
         return render(request, "jobs/vacancy.html", context={"vacancy": Vacancy.objects.filter(id=id).first(),
                                                              'form': form})
@@ -49,91 +52,91 @@ class VacancyView(View):
 
 class VacancyEditView(View):
     def get(self, request, id):
-        if request.user.is_authenticated:
-            try:
-                company = request.user.company
-                if Vacancy.objects.filter(company=company, id=id).first():
-                    is_updated=False
-                    initial_data = {'title': Vacancy.objects.filter(id=id).first().title,
-                                    'speciality': Vacancy.objects.filter(id=id).first().specialty.code,
-                                    'salary_min': Vacancy.objects.filter(id=id).first().salary_min,
-                                    'salary_max': Vacancy.objects.filter(id=id).first().salary_max,
-                                    'skills': Vacancy.objects.filter(id=id).first().skills,
-                                    'description': Vacancy.objects.filter(id=id).first().description}
-                    form = VacancyForm(request.POST or None, initial=initial_data)
-                    # delete = request.GET.get('delete')
-                    return render(request, "jobs/vacancy-edit.html", context={"vacancy": Vacancy.objects.filter(company=company, id=id).first(),
-                                                                              'form': form, 'is_updated': is_updated})
-                else:
-                    return redirect('/')
-            except:
-                return redirect('/')
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        company = request.user.company
+#####crush
+        if not company:
+            return redirect('/')
+        if not Vacancy.objects.filter(company=company, id=id).first():
+            return HttpResponse("Access Error")
+        is_updated = False
+        init = Vacancy.objects.filter(id=id).first()
+        initial_data = {'title': init.title,
+                        'speciality': init.specialty.code,
+                        'salary_min': init.salary_min,
+                        'salary_max': init.salary_max,
+                        'skills': init.skills,
+                        'description': init.description}
+        form = VacancyForm(request.POST or None, initial=initial_data)
+                        # delete = request.GET.get('delete')
+        return render(request, "jobs/vacancy-edit.html", context={"vacancy": Vacancy.objects.filter(company=company, id=id).first(),
+                                                                                  'form': form, 'is_updated': is_updated})
+
+
+
 
     def post(self, request, id):
-        if request.user.is_authenticated:
-            company_us = request.user.company
-            form = VacancyForm(request.POST)
-            vacancy = Vacancy.objects.filter(company=company_us, id=id).first()
-            if form.is_valid():
-                data = form.cleaned_data
-                title = data['title']
-                speciality = data['speciality']
-                skills = data['skills']
-                salary_min = form.clean_salary_min()
-                salary_max = form.clean_salary_max()
-                description = data['description']
-
-                vacancy.title = title
-                vacancy.specialty = Speciality.objects.filter(code=speciality).first()
-                vacancy.skills = skills
-                vacancy.salary_min = salary_min
-                vacancy.salary_max = salary_max
-                vacancy.description = description
-                vacancy.save()
-                is_updated = True
-            else:
-                is_updated = False
-            return render(request, "jobs/vacancy-edit.html",
-                          context={"vacancy": vacancy,
-                                   'form': form, 'is_updated': is_updated})
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        company_us = request.user.company
+        form = VacancyForm(request.POST)
+        vacancy = Vacancy.objects.filter(company=company_us, id=id).first()
+        if form.is_valid():
+            data = form.cleaned_data
+            title = data['title']
+            speciality = data['speciality']
+            skills = data['skills']
+            salary_min = data['salary_min']
+            salary_max = form.clean_salary_max()
+            description = data['description']
+
+            vacancy.title = title
+            vacancy.specialty = Speciality.objects.filter(code=speciality).first()
+            vacancy.skills = skills
+            vacancy.salary_min = salary_min
+            vacancy.salary_max = salary_max
+            vacancy.description = description
+            vacancy.save()
+            is_updated = True
+        else:
+            is_updated = False
+        return render(request, "jobs/vacancy-edit.html", context={"vacancy": vacancy, 'form': form, 'is_updated': is_updated})
+
 
 
 class VacancyCreateView(View):
     def get(self, request):
-        if request.user.is_authenticated:
-            form = VacancyForm(request.POST)
-            is_updated = False
-            return render(request, "jobs/vacancy-create.html", context={'form': form,'is_updated': is_updated})
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        form = VacancyForm(request.POST)
+        is_updated = False
+        return render(request, "jobs/vacancy-create.html", context={'form': form,'is_updated': is_updated})
+
 
     def post(self, request):
         form = VacancyForm(request.POST)
         company = request.user.company
-        if request.user.is_authenticated:
-            if form.is_valid():
-                data = form.cleaned_data
-                title = data["title"]
-                speciality = data["speciality"]
-                skills = data["skills"]
-                salary_min = form.clean_salary_min()
-                salary_max = form.clean_salary_max()
-                description = data["description"]
-                speciality = Speciality.objects.filter(code=speciality).first()
-                Vacancy.objects.create(title=title, specialty=speciality,
-                                       skills=skills, salary_min=salary_min, salary_max=salary_max,
-                                       description=description, company=company)
-                is_updated = True
-                return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
-            else:
-                is_updated = False
-                return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        if form.is_valid():
+            data = form.cleaned_data
+            title = data["title"]
+            speciality = data["speciality"]
+            skills = data["skills"]
+            salary_min = form.clean_salary_min()
+            salary_max = form.clean_salary_max()
+            description = data["description"]
+            speciality = Speciality.objects.filter(code=speciality).first()
+            Vacancy.objects.create(title=title, specialty=speciality,
+                                    skills=skills, salary_min=salary_min, salary_max=salary_max,
+                                    description=description, company=company)
+            is_updated = True
+            return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
+        else:
+            is_updated = False
+            return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
+
 
 
 class CategoryView(View):
@@ -161,50 +164,47 @@ class MyCompanyView(View):
 
 class MyCompanyEditView(View):
     def get(self, request):
-        try:
-            company = request.user.company
-        except:
-            company = None
-        if request.user.is_authenticated:
-            if company == None:
-                form = CompanyForm(request.POST or None)
-                return render(request, "jobs/company-edit.html", context={"form":form})
-            else:
-                initial_data = {"name":company.name, "location":company.location, "description": company.description,
-                                "employee_count": company.employee_count, 'logo': company.logo}
-                form = CompanyForm(request.POST or None, initial=initial_data)
-                return render(request, "jobs/company-edit.html", context={"form": form})
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        company = request.user.company
+######crush
+        if company:
+            initial_data = {"name": company.name, "location": company.location, "description": company.description,
+                            "employee_count": company.employee_count, 'logo': company.logo}
+            form = CompanyForm(request.POST or None, initial=initial_data)
+            return render(request, "jobs/company-edit.html", context={"form": form})
+        else:
+            form = CompanyForm(request.POST or None)
+            return render(request, "jobs/company-edit.html", context={"form": form})
+
 
     def post(self, request):
-        if request.user.is_authenticated:
-            try:
-                company = request.user.company
-            except:
-                company = None
-            form = CompanyForm(request.POST or None, request.FILES or None)
-            if form.is_valid():
-                data = form.cleaned_data
-                if company == None:
-                    Company.objects.create(name=data["name"], location=data['location'], logo=data['logo'],
-                                           employee_count=data['employee_count'], description=data['description'],
-                                           user=request.user)
-                    is_created = True
-                    return render(request, "jobs/company-edit.html", context={"form": form, 'is_created':is_created})
-                else:
-                    if data['logo']!=None:
-                        company.logo = data['logo']
-                    company.name = data["name"]
-                    company.location = data['location']
-                    company.employee_count = data['employee_count']
-                    company.description = data['description']
-                    company.user = request.user
-                    company.save()
-                    is_updated = True
-                    return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
-        else:
+        if not request.user.is_authenticated:
             return redirect('/')
+        company = request.user.company
+        form = CompanyForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            data = form.cleaned_data
+    ######crush
+            if company:
+                Company.objects.create(name=data["name"], location=data['location'], logo=data['logo'],
+                                        employee_count=data['employee_count'], description=data['description'],
+                                        user=request.user)
+                is_created = True
+                return render(request, "jobs/company-edit.html", context={"form": form, 'is_created':is_created})
+            else:
+                print(data)
+                # if data['logo']!=None:
+                #     company.logo = data['logo']
+                # company.name = data["name"]
+                # company.location = data['location']
+                # company.employee_count = data['employee_count']
+                # company.description = data['description']
+                # company.user = request.user
+                # company.save()
+                # is_updated = True
+                return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
+
 
 
 class MyLoginView(LoginView):
@@ -319,7 +319,11 @@ class SearchView(View):
             for i in range(len(vacancies)):
                 if search in vacancies[i].title:
                     search_list.append(vacancies[i])
-            return render(request, "jobs/search.html", context={'vacancies': search_list})
+                if search in vacancies[i].skills:
+                    search_list.append(vacancies[i])
+                if search in vacancies[i].description:
+                    search_list.append(vacancies[i])
+            return render(request, "jobs/search.html", context={'vacancies': search_list, 'search':search})
         else:
             return redirect('/')
 

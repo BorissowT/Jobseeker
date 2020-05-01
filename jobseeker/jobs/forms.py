@@ -2,15 +2,15 @@ from django import forms
 
 
 class ApplicationForm(forms.Form):
-    name = forms.CharField(min_length=3, max_length=50, label='Name and Surname', widget=forms.TextInput(attrs={'class': 'form-control',
+    written_username = forms.CharField(min_length=3, max_length=50, label='Name and Surname', widget=forms.TextInput(attrs={'class': 'form-control',
                                                                                    'id': 'userName',
                                                                                    'placeholder': 'Name',
                                                                                    'required': True}))
-    phone = forms.CharField(label='Phone number', widget=forms.TextInput(attrs={'class': 'form-control',
+    written_phone = forms.CharField(label='Phone number', widget=forms.TextInput(attrs={'class': 'form-control',
                                                                                 'required': True,
                                                                                 'placeholder': 'Phone',
                                                                                 'id': 'userPhone'}))
-    message = forms.CharField(min_length=3, max_length=550, label='message', widget=forms.Textarea(attrs={'class': 'form-control',
+    written_cover_letter = forms.CharField(min_length=3, max_length=550, label='message', widget=forms.Textarea(attrs={'class': 'form-control',
                                                                                'required': True,
                                                                                'id': 'userMsg',
                                                                                'rows':"8"}))
@@ -38,12 +38,12 @@ class VacancyForm(forms.Form):
                                                              ('management', 'Менеджмент'),
                                                              ('testing', 'Тестирование'),
                                                              ('design', 'Дизайн'),])
-    salary_min = forms.IntegerField(label='Min salary',
+    salary_min = forms.IntegerField(min_value=100, label='Min salary',
                              widget=forms.TextInput(attrs={'class': 'form-control',
                                                            'id': 'vacancySalaryMin',
                                                            'placeholder': 'Minimal Salary',
                                                            'required': True}))
-    salary_max = forms.IntegerField(label='Max salary',
+    salary_max = forms.IntegerField(min_value=200, label='Max salary',
                                      widget=forms.TextInput(attrs={'class': 'form-control',
                                                                    'id': 'vacancySalaryMax',
                                                                    'placeholder': 'Maximal salary',
@@ -59,16 +59,12 @@ class VacancyForm(forms.Form):
                                                                                  'id': 'vacancySkills',
                                                                                  'rows': "3"}))
 
-    def clean_salary_min(self):
-        salary_min = self.cleaned_data.get("salary_min")
-        if salary_min < 0:
-            raise forms.ValidationError("Salary can't be less than 0")
-        return salary_min
 
     def clean_salary_max(self):
+        salary_min = self.cleaned_data.get("salary_min")
         salary_max = self.cleaned_data.get("salary_max")
-        if salary_max < 0:
-            raise forms.ValidationError("Salary can't be less than 0")
+        if salary_min > salary_max:
+            raise forms.ValidationError("Minimal salary can't be more than maximal salary")
         return salary_max
 
 
