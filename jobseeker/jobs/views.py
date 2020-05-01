@@ -39,6 +39,7 @@ class VacancyView(View):
             date = form.cleaned_data
             phone = form.clean_phone()
             name = date['name']
+
             message = date['message']
             Application.objects.create(written_username=name, written_phone=phone, written_cover_letter=message, vacancy=Vacancy.objects.filter(id=id).first(), user=request.user)
             return render(request, "jobs/send.html")
