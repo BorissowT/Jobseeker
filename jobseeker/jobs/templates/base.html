@@ -48,7 +48,7 @@
                 <a href="{% url 'myresume' %}" class="dropdown-item py-2">Резюме</a>
                 <a href="{% url 'mycompany' %}" class="dropdown-item py-2">Компания</a>
                  {% if user.is_superuser %}
-                 <a href="{% url 'admin' %}" class="dropdown-item py-2">Войти в админку</a>
+                 <a href="{% url 'admin:index' %}" class="dropdown-item py-2">Войти в админку</a>
                  {% endif %}
                 <a href="{% url 'logout' %}" class="dropdown-item py-2">Выйти</a>
                 </div>
