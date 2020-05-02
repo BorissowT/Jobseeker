@@ -4,9 +4,9 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import CreateView
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 
-from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm
+from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm, EditCompanyForm
 from .models import Company, Speciality, Vacancy, Resume, Application
 
 
@@ -71,7 +71,8 @@ class VacancyEditView(View):
         form = VacancyForm(request.POST or None, initial=initial_data)
                         # delete = request.GET.get('delete')
         return render(request, "jobs/vacancy-edit.html", context={"vacancy": Vacancy.objects.filter(company=company, id=id).first(),
-                                                                                  'form': form, 'is_updated': is_updated})
+                                                                  'form': form,
+                                                                  'is_updated': is_updated})
 
 
 
@@ -128,9 +129,13 @@ class VacancyCreateView(View):
             salary_max = form.clean_salary_max()
             description = data["description"]
             speciality = Speciality.objects.filter(code=speciality).first()
-            Vacancy.objects.create(title=title, specialty=speciality,
-                                    skills=skills, salary_min=salary_min, salary_max=salary_max,
-                                    description=description, company=company)
+            Vacancy.objects.create(title=title,
+                                   specialty=speciality,
+                                   skills=skills,
+                                   salary_min=salary_min,
+                                   salary_max=salary_max,
+                                   description=description,
+                                   company=company)
             is_updated = True
             return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
         else:
@@ -171,63 +176,44 @@ class MyCompanyEditView(View):
         if company:
             initial_data = {"name": company.name, "location": company.location, "description": company.description,
                             "employee_count": company.employee_count, 'logo': company.logo}
-            form = CompanyForm(request.POST or None, initial=initial_data)
+            form = EditCompanyForm(request.POST or None, initial=initial_data)
             return render(request, "jobs/company-edit.html", context={"form": form})
         else:
             form = CompanyForm(request.POST or None)
             return render(request, "jobs/company-edit.html", context={"form": form})
 
-
     def post(self, request):
         if not request.user.is_authenticated:
             return redirect('/')
         company = request.user.company
-        form = CompanyForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            data = form.cleaned_data
-    ######crush
-            if company:
-                Company.objects.create(name=data["name"], location=data['location'], logo=data['logo'],
-                                        employee_count=data['employee_count'], description=data['description'],
-                                        user=request.user)
-                is_created = True
-                return render(request, "jobs/company-edit.html", context={"form": form, 'is_created':is_created})
-            else:
-                print(data)
-                # if data['logo']!=None:
-                #     company.logo = data['logo']
-                # company.name = data["name"]
-                # company.location = data['location']
-                # company.employee_count = data['employee_count']
-                # company.description = data['description']
-                # company.user = request.user
-                # company.save()
-                # is_updated = True
+ #########crush
+        if company:
+            form = EditCompanyForm(request.POST or None, request.FILES or None)
+            if form.is_valid():
+                data = form.cleaned_data
+                data.update({"user": request.user})
+                if data['logo'] == None:
+                    data['logo'] = company.logo
+                Company.objects.filter(id=company.id).update(**data)
+                # picture has to be saved this way...
+                company.logo = data['logo']
+                company.save()
+                is_updated = True
                 return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
+            else:
+                form = CompanyForm(request.POST or None, request.FILES or None)
+                if form.is_valid():
+                    data = form.cleaned_data
+                    data.update({"user": request.user})
+                    Company.objects.create(**data)
+                is_created = True
+                return render(request, "jobs/company-edit.html", context={"form": form, 'is_created': is_created})
 
 
 
 class MyLoginView(LoginView):
     template_name = 'authentication/login.html'
     redirect_authenticated_user = True
-
-    # def get(self, request):
-    #     if request.user.is_authenticated:
-    #         return redirect('/')
-    #     form = LoginForm()
-    #     return render(request, self.template_name, {'form': form})
-    #
-    # def post(self, request):
-    #     form = LoginForm(request.POST)
-    #     if form.is_valid():
-    #         username = form.username_check()
-    #         password = form.password_check()
-    #         user = authenticate(request, username=username, password=password)
-    #         if user is not None:
-    #             login(request, user)
-    #             return redirect('/')
-    #
-    #     return render(request, self.template_name, {'form': form})
 
 
 class MySignupView(CreateView):
@@ -255,9 +241,14 @@ class ResumeCreateView(View):
             except:
                 resume = None
             if resume != None:
-                initial_data = {"name": request.user.first_name, "surname": request.user.last_name,
-                                'status': resume.status, 'salary': resume.salary, 'speciality': resume.specialty,
-                                'grade': resume.grade, 'education': resume.education, 'experience': resume.experience,
+                initial_data = {"name": request.user.first_name,
+                                "surname": request.user.last_name,
+                                'status': resume.status,
+                                'salary': resume.salary,
+                                'speciality': resume.specialty,
+                                'grade': resume.grade,
+                                'education': resume.education,
+                                'experience': resume.experience,
                                 'portfolio': resume.portfolio}
                 form = ResumeForm(request.POST or None, initial=initial_data)
                 return render(request, "jobs/resume-edit.html", context={"resume": resume, 'form': form})

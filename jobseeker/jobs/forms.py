@@ -168,6 +168,16 @@ class CompanyForm(forms.Form):
     )
 
 
+class EditCompanyForm(CompanyForm):
+    logo = forms.FileField(
+        label='Download',
+        required=False,
+        widget=forms.FileInput(
+            attrs={'class': 'custom-file-input'}
+        )
+    )
+
+
 class ResumeForm(forms.Form):
     status = forms.ChoiceField(
         widget=forms.Select(
