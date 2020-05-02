@@ -12,7 +12,7 @@ urlpatterns = [
     path('search/', SearchView.as_view(), name='search'),
 
     path('category/<str:category>/', CategoryView.as_view(), name="category"),
-
+    path('application/delete/<int:id>', ApplicationDeleteView.as_view(), name="delete"),
     path('admin/', admin.site.urls, name="admin")
 ]
 

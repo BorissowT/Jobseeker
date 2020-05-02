@@ -67,7 +67,7 @@
                 <div class="card-body px-4">
                   <div class="row">
                     <p class="col-11 mb-1 font-weight-bold">Имя: {{ application.written_username}}</p>
-                      <button onclick="location.href= '{% url 'vacancy/edit' vacancy.id %}?name = delete'" value='{{application.id}}'  type="button" class="col-1 close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <button onclick="location.href= '{% url 'delete' application.id %}'" type="button" class="col-1 close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                   </div>
                   <p class="mb-2 text-dark">Телефон: {{application.written_phone}}</p>
                   <p class="mb-1">Письмо: {{application.written_cover_letter}}</p>

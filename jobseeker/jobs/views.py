@@ -322,3 +322,11 @@ def view_404 (request, exception):
     return render(
         request, '404.html'
     )
+
+
+class ApplicationDeleteView(View):
+    def get(self, request, id):
+        application = Application.objects.filter(id=id).first()
+        vacancy = application.vacancy
+        application.delete()
+        return redirect('/vacancy/edit/{}'.format(vacancy.id))
