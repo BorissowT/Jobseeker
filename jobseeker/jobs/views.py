@@ -54,10 +54,9 @@ class VacancyEditView(View):
     def get(self, request, id):
         if not request.user.is_authenticated:
             return redirect('/')
-        company = request.user.company
-#####crush
-        if not company:
+        if not hasattr(request.user, 'company'):
             return redirect('/')
+        company = request.user.company
         if not Vacancy.objects.filter(company=company, id=id).first():
             return HttpResponse("Access Error")
         is_updated = False
@@ -69,7 +68,6 @@ class VacancyEditView(View):
                         'skills': init.skills,
                         'description': init.description}
         form = VacancyForm(request.POST or None, initial=initial_data)
-                        # delete = request.GET.get('delete')
         return render(request, "jobs/vacancy-edit.html", context={"vacancy": Vacancy.objects.filter(company=company, id=id).first(),
                                                                   'form': form,
                                                                   'is_updated': is_updated})
@@ -171,9 +169,8 @@ class MyCompanyEditView(View):
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect('/')
-        company = request.user.company
-######crush
-        if company:
+        if hasattr(request.user, 'company'):
+            company = request.user.company
             initial_data = {"name": company.name, "location": company.location, "description": company.description,
                             "employee_count": company.employee_count, 'logo': company.logo}
             form = EditCompanyForm(request.POST or None, initial=initial_data)
@@ -185,9 +182,8 @@ class MyCompanyEditView(View):
     def post(self, request):
         if not request.user.is_authenticated:
             return redirect('/')
-        company = request.user.company
- #########crush
-        if company:
+        if hasattr(request.user, 'company'):
+            company = request.user.company
             form = EditCompanyForm(request.POST or None, request.FILES or None)
             if form.is_valid():
                 data = form.cleaned_data
