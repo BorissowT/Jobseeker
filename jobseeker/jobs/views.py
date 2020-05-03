@@ -1,10 +1,9 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import CreateView
-from django.http import HttpResponse, Http404
 
 from .forms import ApplicationForm, VacancyForm, CompanyForm, ResumeForm, SearchForm, EditCompanyForm
 from .models import Company, Speciality, Vacancy, Resume, Application
@@ -86,7 +85,6 @@ class VacancyEditView(View):
         return render(request, "jobs/vacancy-edit.html", context={"vacancy": vacancy, 'form': form, 'is_updated': is_updated})
 
 
-
 class VacancyCreateView(View):
     def get(self, request):
         if not request.user.is_authenticated:
@@ -94,7 +92,6 @@ class VacancyCreateView(View):
         form = VacancyForm(request.POST)
         is_updated = False
         return render(request, "jobs/vacancy-create.html", context={'form': form,'is_updated': is_updated})
-
 
     def post(self, request):
         form = VacancyForm(request.POST)
@@ -122,7 +119,6 @@ class VacancyCreateView(View):
         else:
             is_updated = False
             return render(request, "jobs/vacancy-create.html", context={'form': form, 'is_updated': is_updated})
-
 
 
 class CategoryView(View):
@@ -190,7 +186,6 @@ class MyCompanyEditView(View):
                 return render(request, "jobs/company-edit.html", context={"form": form, 'is_created': is_created})
 
 
-
 class MyLoginView(LoginView):
     template_name = 'authentication/login.html'
     redirect_authenticated_user = True
@@ -200,7 +195,6 @@ class MySignupView(CreateView):
     form_class = UserCreationForm
     success_url = 'login'
     template_name = 'authentication/signup.html'
-
 
 
 class ResumeView(View):
