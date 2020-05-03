@@ -53,7 +53,7 @@ class VacancyForm(forms.Form):
                                        'required': True}
                             )
                             )
-    speciality = forms.ChoiceField(
+    specialty = forms.ChoiceField(
         widget=forms.Select(
             attrs={'class': 'custom-select mr-sm-2',
                    'id': 'userSpecialization',
@@ -198,7 +198,7 @@ class ResumeForm(forms.Form):
                    'id': 'userPortfolio',
                    'placeholder': 'Portfolio',
                    'required': True}))
-    speciality = forms.ChoiceField(
+    specialty = forms.ChoiceField(
         widget=forms.Select(
             attrs={'class': 'custom-select mr-sm-2',
                    'id': 'userPortfolio',
