@@ -60,7 +60,7 @@ class VacancyEditView(View):
         is_updated = False
         init = Vacancy.objects.filter(id=id).first()
         initial_data = {'title': init.title,
-                        'speciality': init.specialty.code,
+                        'specialty': init.specialty.code,
                         'salary_min': init.salary_min,
                         'salary_max': init.salary_max,
                         'skills': init.skills,
