@@ -176,14 +176,14 @@ class MyCompanyEditView(View):
                 company.save()
                 is_updated = True
                 return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
-            else:
-                form = CompanyForm(request.POST or None, request.FILES or None)
-                if form.is_valid():
-                    data = form.cleaned_data
-                    data.update({"user": request.user})
-                    Company.objects.create(**data)
-                is_created = True
-                return render(request, "jobs/company-edit.html", context={"form": form, 'is_created': is_created})
+        else:
+            form = CompanyForm(request.POST or None, request.FILES or None)
+            if form.is_valid():
+                data = form.cleaned_data
+                data.update({"user": request.user})
+                Company.objects.create(**data)
+            is_created = True
+            return render(request, "jobs/company-edit.html", context={"form": form, 'is_created': is_created})
 
 
 class MyLoginView(LoginView):
