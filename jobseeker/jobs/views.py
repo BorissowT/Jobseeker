@@ -168,10 +168,17 @@ class MyCompanyEditView(View):
                 data = form.cleaned_data
                 data.update({"user": request.user})
                 print(data["logo"])
-                if data['logo'] == None:
-                    data["logo"] = company.logo
-                Company.objects.filter(id=company.id).update(**data)
+                if data['logo'] != None:
+                    company.logo = data["logo"]
+                company.name = data["name"]
+                company.location = data["location"]
+                company.description = data["description"]
+                company.employee_count = data["employee_count"]
+                company.save()
                 is_updated = True
+                return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
+            else:
+                is_updated = False
                 return render(request, "jobs/company-edit.html", context={"form": form, 'is_updated': is_updated})
         else:
             form = CompanyForm(request.POST or None, request.FILES or None)
